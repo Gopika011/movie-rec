@@ -10,3 +10,7 @@ class Movies(db.Model):
     genre = db.Column(db.String(100))
     release_date = db.Column(db.Date)
     rating = db.Column(db.Float)
+
+    def __repr__(self):
+        return f"movie with title {self.title}" 
+    

@@ -30,7 +30,8 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return 'flask with sqlite'
+    m = Movies.query.all()
+    return str(m)
 
 if __name__=='__main__':
     app.run(debug=True)
