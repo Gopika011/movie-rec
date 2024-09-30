@@ -41,7 +41,7 @@ with app.app_context():
 def index():
     # m = Movies.query.all()
     # return str(m)
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 @app.route('/login', methods=['POST'])
