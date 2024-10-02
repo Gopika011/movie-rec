@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect, session, url_for, flash
 from sqlalchemy import inspect
 from datetime import date
+from flask_migrate import Migrate
 from models import Users,Movies,db
 
 
@@ -8,9 +9,11 @@ app = Flask(__name__) #cretae instance of flask
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY']='pacman'
 
 
 db.init_app(app) # Initialize the db with the app
+migrate = Migrate(app,db)
 
 def initial_data():
     if not Movies.query.all():
@@ -23,15 +26,17 @@ def initial_data():
         db.session.add(user1)
         db.session.commit()
 
+    db.create_all()
+
 
 with app.app_context():
-    db.drop_all()   # This will drop all tables 
-    db.create_all() # This will recreate them- SQLAlchemy will look at the imported models and create tables
-
-    initial_data()
-
     inspector = inspect(db.engine)
     tables = inspector.get_table_names()
+
+    if not tables:
+        initial_data()
+
+
     print(f"Tables created: {tables}")
 
     movies = Movies.query.all()
@@ -41,20 +46,33 @@ with app.app_context():
 def index():
     # m = Movies.query.all()
     # return str(m)
-    return render_template('login.html')
+    print(session)
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('index.html', username=session['username'])
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST','GET'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    if 'user_id' in session:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-    user = Users.query.filter_by(username=username).first()
-    print(user)
-    if user and user.password == password:
-        return "success"
-    else:
-        return "invalid"
+        user = Users.query.filter_by(username=username).first()
+        print(user)
+        if user and user.password == password:
+            session['user_id'] = user.id
+            session['username'] = user.username
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html')
+
+    #if GET renders this page
+    return render_template('login.html')
+    
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -73,11 +91,33 @@ def signup():
     new_user = Users(username=username, email=email,password=password)
     db.session.add(new_user)
     db.session.commit()
+    session['user_id'] = new_user.id 
+    session['username'] = new_user.username
 
-    return "success"
 
+    return redirect(url_for('index'))
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/view_session')
+def view_session():
+    if 'user_id' in session:
+        return f"User ID: {session['user_id']}, Username: {session.get('username')}"
+    else:
+        return "No user is currently logged in."
+    
 
 if __name__=='__main__':
     app.run(debug=True)
 
 
+
+
+# flask db init - initialize , only do first time
+#- do this everytime you update tables
+# flask db migrate
+# flask db update
