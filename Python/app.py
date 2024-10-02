@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,redirect, session, url_for, flash
+from flask import Flask, render_template, request,redirect, session, url_for, jsonify
 from sqlalchemy import inspect
 from datetime import date
 from flask_migrate import Migrate
@@ -109,6 +109,80 @@ def view_session():
         return f"User ID: {session['user_id']}, Username: {session.get('username')}"
     else:
         return "No user is currently logged in."
+    
+
+#table functions
+@app.route('/add_movie')
+def add_movie():
+    title = "The Dark Knight"
+    genre="Action"
+    release_date=date(2008,7,18)
+    rating=9
+
+    existing_movie = Movies.query.filter_by(title=title, genre=genre, release_date=release_date).first()
+
+    if existing_movie:
+        return "Movie already exists"
+
+    new_movie=Movies(title=title,genre=genre,release_date=release_date, rating=rating)
+
+    db.session.add(new_movie)
+    db.session.commit()
+    return "success"
+
+@app.route('/view_users')
+def view_users():
+    users = Users.query.all()
+    u_list=[]
+    
+    for user in users:
+        u_list.append({
+            "id": user.id,
+            "username": user.username,
+        })
+
+    return jsonify(u_list)
+
+@app.route('/view_movies')
+def view_movies():
+    movies = Movies.query.all()
+    m_list=[]
+    
+    for movie in movies:
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title,
+            "genre": movie.genre,
+            "release_date": movie.release_date.isoformat(),
+            "rating": movie.rating
+        })
+
+    return jsonify(m_list)
+
+@app.route('/delete_movie/<int:id>')
+def delete_movie(id):
+    movie = Movies.query.filter_by(id=id).first()
+    if not movie:
+        return "movie not found"
+    db.session.delete(movie)
+    db.session.commit()
+    return "success"
+
+@app.route('/update_movie/<int:id>')
+def update_movie(id):
+    movie = Movies.query.filter_by(id=id).first()
+    if not movie:
+        return "movie not found"
+    
+    data = request.get_json()
+    movie.title = data.get('title', movie.title)
+    movie.genre = data.get('genre', movie.genre)
+    movie.release_date = date.fromisoformat(data.get('release_date')) if data.get('release_date') else movie.release_date
+    movie.rating = data.get('rating', movie.rating)
+
+    db.session.commit()
+    return "success"
+
     
 
 if __name__=='__main__':
