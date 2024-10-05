@@ -54,40 +54,27 @@ def index():
     return render_template('index.html', username=session['username'])
 
 
-
-    
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST','GET'])
 def login():
-    username = request.json['username']
-    password = request.json['password']
+    if 'user_id' in session:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-    user = Users.query.filter_by(username=username).first()
+        user = Users.query.filter_by(username=username).first()
+        print(user)
+        if user and user.password == password:
+            session['user_id'] = user.id
+            session['username'] = user.username
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html')
 
-    if user and user.password == password:
-        session['user_id'] = user.id
-        session['username'] = user.username
-        return jsonify({
-            "id": user.id,
-            "username": user.username
-        })
-    else:
-        return jsonify({"error": "Unauthorized"}), 401
+    #if GET renders this page
+    return render_template('login.html')
+
     
-@app.route('/@me', methods=['GET'])
-def get_current_user():
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error":"Unauthorized"}), 401
-    
-    user = Users.query.filter_by(id = user_id).first()
-    return jsonify({
-        "user_id" : user.id,
-        "username" : user.username 
-    })
-
-
-#a cookie will be set when logging in, /@me checks the cookie and return info
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -100,11 +87,9 @@ def signup():
         return "Passwords do not match"
 
     ex_user = Users.query.filter_by(username = username).first()
-    # if ex_user:
-    #     return "User already exists"
-    
     if ex_user:
-        return jsonify({"error": "User already exists"}), 409
+        return "User already exists"
+    
     
     new_user = Users(username=username, email=email,password=password)
     db.session.add(new_user)
@@ -113,18 +98,14 @@ def signup():
     session['username'] = new_user.username
 
 
-    # return redirect(url_for('index'))
-    return jsonify({
-        "id": new_user.id,
-        "username": new_user.username
-    })
+    return redirect(url_for('index'))
+
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    # return redirect(url_for('login'))
-    return jsonify({"message": "Logged out success"})
+    return redirect(url_for('login'))
 
 @app.route('/view_session')
 def view_session():
