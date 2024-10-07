@@ -1,5 +1,7 @@
 import React from 'react'
 import { Navigate, useNavigate } from 'react-router-dom';
+import Hero from '../components/LoginPage/Hero';
+import About from '../components/LoginPage/About';
 
 const Home = () => {
   const user = JSON.parse(localStorage.getItem('user'))
@@ -14,6 +16,7 @@ const Home = () => {
         <div className='text-3xl font-bold'>Welcome {user.username}</div>
         <button className='btn btn-error btn-md' onClick={handleLogout}>LOGOUT</button>
     </div>
+
     
   )
 }
