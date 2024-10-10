@@ -1,8 +1,11 @@
 import React from 'react'
+import Sidebar from '../HomePage/Sidebar'
 
 const SearchPage = () => {
   return (
-    <div>SearchPage</div>
+    <div className='relative flex-grow bg-fuchsia-900'>
+        <Sidebar/>
+    </div>
   )
 }
 
