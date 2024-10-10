@@ -1,0 +1,87 @@
+
+
+.recommendations-container {
+   background-color: black;
+    color: #ffffff;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+  }
+  
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 60px;
+    margin-left:60px;
+  }
+  
+  .text-section {
+    flex: 2;
+    margin-right: 10px;
+  }
+  
+  .image-section {
+    flex: 2.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image-section img {
+    width: px;
+    height: auto;
+  }
+  
+  .recommendations-section {
+    margin-bottom: 50px;
+  }
+
+  .rich-data-section{
+    margin-top: 0;
+
+  }
+  
+  .info-box {
+    background: #D9D9D91C;
+    padding: 15px;
+    margin-bottom: 35px;
+    margin-left: 60px;
+    border-radius: 25px;
+    border: 1px solid #444;
+    border-top: 15px solid #FA6C0087;
+    ;
+    width: 85%;
+  }
+  
+  .info-box h4 {
+    margin: 0 0 20px;
+    font-size: 1.2em;
+  }
+  
+  .info-box p {
+    margin: 0;
+    font-size: 1em;
+  }
+  
+  /* Heading Styles */
+  .recommendations-section h2, .rich-data-section h2 {
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #d14f0f;
+  }
+  
+  /* Text Styling */
+  .recommendations-section p, .rich-data-section p {
+    font-size: 1em;
+    line-height: 1.5;
+  }
+  

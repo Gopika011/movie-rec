@@ -3,12 +3,16 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
+import Search from './pages/Search';
+import List from './pages/List'
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+        <Route path='/search' element={<ProtectedRoute><Search/></ProtectedRoute>}/>
+        <Route path='/list' element={<ProtectedRoute><List/></ProtectedRoute>}/>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound/>}/>
       </Routes>
