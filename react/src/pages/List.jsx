@@ -4,7 +4,7 @@ import Navbar from '../components/HomePage/Navbar'
 
 const List = () => {
   return (
-    <div>
+    <div className='flex flex-col min-h-screen'>
       <Navbar/>
       <ListPage />
     </div>
