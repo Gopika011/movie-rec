@@ -45,7 +45,26 @@ export const moviesData = [
         id:9,
         title:"John Wick: Chapter 4",
         full_poster_url:"https://image.tmdb.org/t/p/original/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
-    }
+    },
+    {
+        id:10,
+        title:"Creed III",
+        full_poster_url:"https://image.tmdb.org/t/p/original/wWba3TaojhK7NdycRhoQpsG0FaH.jpg",
+    },
+    {
+        id:11,
+        title:"Narvik",
+        full_poster_url:"https://image.tmdb.org/t/p/original/gU4mmINWUF294Wzi8mqRvi6peMe.jpg",
+    },
+    {
+        id:12,
+        title:"Evil Dead Rise",
+        full_poster_url:"https://image.tmdb.org/t/p/original/mIBCtPvKZQlxubxKMeViO2UrP3q.jpgcd",
+    },
+
+
+    
+
     // Add more movies here...
   ];
   
