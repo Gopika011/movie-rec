@@ -1,14 +1,23 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const [open,setOpen] = useState(false)
+    const user = JSON.parse(localStorage.getItem('user'))
+    const navigate = useNavigate()
+  
+    const handleLogout = ()=>{
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+
   return (
     <div className='w-full bg-[#141414] h-24 flex justify-between sticky top-0 z-50 text-white items-center px-20'>
         <div className='text-4xl text-[#FA6C00] font-semibold'>#NAME</div>
 
         <div className='flex gap-10 text-lg justify-center items-center'>
             <div className='text-[#FA6C00]'>about</div>
-            <div className='flex justify-center items-center gap-2 cursor-pointer' onClick={()=>{setOpen(!open)}}>
+            <div className='flex justify-center items-center gap-2 cursor-pointer hover:text-gray-400 transition-all duration-300' onClick={()=>{setOpen(!open)}}>
                 <svg
                 fill="none"
                 stroke="currentColor"
@@ -35,8 +44,8 @@ const Navbar = () => {
 
             {open && 
             <div className='bg-black h-20 w-48 absolute top-[90px] right-20 transition-all duration-300 flex flex-col'>
-                <div className='h-1/2 flex justify-center items-center border-b-[1px]'>Gopika</div>
-                <div className='h-1/2 flex justify-center items-center'>Logout</div>
+                <div className='h-1/2 flex justify-center items-center border-b-[1px]'>{user.name}</div>
+                <button className='h-1/2 flex justify-center items-center' onClick={handleLogout}>Logout</button>
             </div>}
         </div>
     </div>

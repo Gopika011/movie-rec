@@ -1,9 +1,10 @@
+import pandas as pd
 from flask import Flask, render_template, request,redirect, session, url_for, jsonify, abort
 from flask_cors import CORS
 from sqlalchemy import inspect
-from datetime import date
+from datetime import date,datetime
 from flask_migrate import Migrate
-from models import Users,Movies,Genre,MovieGenres,db
+from models import Users,Movies,Genre,MovieGenres,Watchlist,db
 
 
 app = Flask(__name__) #cretae instance of flask
@@ -17,18 +18,68 @@ app.config['SECRET_KEY']='pacman'
 db.init_app(app) # Initialize the db with the app
 migrate = Migrate(app,db)
 
+csv_file = "C:\Users\hp\Downloads\movies_req.csv"
+df = pd.read_csv(csv_file, usecols=[
+    'title', 'genres', 'original_language', 'overview', 'production_companies', 
+    'release_date','runtime', 'tagline', 'vote_average', 'credits', 'poster_path', 'backdrop_path'
+])
+
+
+# Import into the database
+def import_movies():
+    for index, row in df.iterrows():
+        # Check if the movie already exists in the database
+        existing_movie = Movies.query.filter_by(title=row['title'], release_date=row['release_date']).first()
+        if not existing_movie:
+            # Create a new movie entry
+            release_date_str = row['release_date']  # e.g., "02-08-2023"
+            release_date = datetime.strptime(release_date_str, "%d-%m-%Y").date()
+            new_movie = Movies(
+                title=row['title'],
+                release_date=release_date,
+
+
+                original_language=row['original_language'],
+                overview=row['overview'],
+                production_company=row['production_companies'],
+                # release_date=datetime.strptime(row['Release date'], '%Y-%m-%d'),
+                runtime=int(row['runtime']),
+                tagline=row['tagline'],
+                rating=float(row['vote_average']),
+                credits=row['credits'],
+                poster=row['poster_path'],
+                backdrop=row['backdrop_path']
+            )
+            db.session.add(new_movie)
+            db.session.flush()
+
+            # Handle genres
+            genre_list = row['genres'].split('-')  
+            for genre_name in genre_list:
+                genre = Genre.query.filter(Genre.name.ilike(genre_name.strip())).first()
+                if not genre:
+                    genre = Genre(name=genre_name.strip())
+                    db.session.add(genre)
+                    db.session.flush()
+
+                movie_genre = MovieGenres(movie_id=new_movie.id, genre_id=genre.id)
+                db.session.add(movie_genre)
+
+            db.session.commit()
+
 def initial_data():
-    if not Movies.query.all():
-        movie1 = Movies(title="Inception",release_date=date(2010,7,16), rating=8.8)
-        db.session.add(movie1)
-        db.session.commit()
-
-    if not Users.query.all():
-        user1 = Users(username="jrgopika", password="123456")
-        db.session.add(user1)
-        db.session.commit()
-
     db.create_all()
+    # if not Movies.query.all():
+    #     movie1 = Movies(title="Inception",release_date=date(2010,7,16), rating=8.8)
+    #     db.session.add(movie1)
+    #     db.session.commit()
+
+    # if not Users.query.all():
+    #     user1 = Users(username="jrgopika", password="123456")
+    #     db.session.add(user1)
+    #     db.session.commit()
+
+    # db.create_all()
 
 def initial_genre():
     genre1 = Genre(name="Sci-fi")
@@ -46,18 +97,19 @@ def initial_genre():
 with app.app_context():
     inspector = inspect(db.engine)
     tables = inspector.get_table_names()
+    import_movies()
 
     if not tables:
         initial_data()
 
-    if not MovieGenres.query.all():
-        initial_genre()
+    # if not MovieGenres.query.all():
+    #     initial_genre()
 
 
     print(f"Tables created: {tables}")
 
-    movies = Movies.query.all()
-    print(f"Movies in the database: {[movie.title for movie in movies]}")
+    # movies = Movies.query.all()
+    # print(f"Movies in the database: {[movie.title for movie in movies]}")
 
 @app.route('/')
 def index():
@@ -274,7 +326,49 @@ def update_movie(id):
     db.session.commit()
     return jsonify({"message": f"Movie {movie.title} modified"}),200
 
+
+
+@app.route('/add_list/<int:user_id>/<int:movie_id>', methods=['POST'])
+def add_list(user_id, movie_id):
+    ex = Watchlist.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+    if ex:
+        return jsonify({"error":"Movie already in watchlist"}),409
     
+    new_entry = Watchlist(user_id=user_id, movie_id=movie_id)
+    db.session.add(new_entry)
+    db.session.commit()
+    return jsonify({"message": "Movie added to watchlist"}), 200
+
+@app.route('/remove_list/<int:user_id>/<int:movie_id>', methods=['POST'])
+def remove_list(user_id, movie_id):
+    ex = Watchlist.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+    if not ex:
+        return jsonify({"error":"Movie not found in watchlist"}),404
+    
+    db.session.delete(ex)
+    db.session.commit()
+    return jsonify({"message": "Movie removed from watchlist"}), 200
+
+@app.route('/view_list/<int:user_id>', methods=['GET'])
+def view_list(user_id):
+    ex = Watchlist.query.filter_by(user_id=user_id).all()
+
+    if not ex:
+        return jsonify({"message":"No Movie found in watchlist"}),404
+    
+    movies =[]
+    for entry in ex:
+        movie = Movies.query.get(entry.movie_id)
+        if movie:
+            movies.append({
+                'id': movie.id,
+                'title': movie.title,
+                'release_date': movie.release_date.isoformat(),
+                'rating': movie.rating
+            })
+
+    return jsonify(movies)
+
 
 if __name__=='__main__':
     app.run(debug=True)

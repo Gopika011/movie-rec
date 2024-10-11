@@ -8,7 +8,17 @@ class Movies(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     release_date = db.Column(db.Date)
+    user_rating = db.Column(db.Float)
+
+    original_language = db.Column(db.String(50))
+    overview = db.Column(db.String(255))
+    production_company = db.Column(db.String(255))
+    runtime = db.Column(db.Integer)
+    tagline = db.Column(db.String(255))
     rating = db.Column(db.Float)
+    credits = db.Column(db.String(255))
+    poster_path = db.Column(db.String(255))
+    backdrop_path = db.Column(db.String(255))
 
     # link Movies and the MovieGenres model
     movie_genres = db.relationship('MovieGenres', backref='movie', lazy=True)
@@ -44,8 +54,8 @@ class MovieGenres(db.Model):
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), nullable=False)
 
-    # movie_genre.movie - You can access the related movie (thanks to backref='movie')
-    # movie_genre.genre - You can access the related genre
+    # movie_genre.movie_id - You can access the related movie (thanks to backref='movie')
+    # movie_genre.genre_id - You can access the related genre
 
     def _repr_(self):
         return f"<MovieGenres movie_id={self.movie_id}, genre_id={self.genre_id}>"
@@ -75,16 +85,17 @@ class Users(db.Model):
 
 
 
-#    class Watchlist(db.Model):
-#     _tablename_ = 'watchlist'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-#     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
-#     added_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+class Watchlist(db.Model):
+    _tablename_ = 'watchlist'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
 
-#     # Relationship with Users and Movies tables
-#     user = db.relationship('Users', backref=db.backref('watchlists', lazy=True))
-#     movie = db.relationship('Movies', backref=db.backref('watchlists', lazy=True))
+    # Relationship with Users and Movies tables
+    user = db.relationship('Users', backref=db.backref('watchlists', lazy=True))
+    movie = db.relationship('Movies', backref=db.backref('watchlists', lazy=True))
 
-#     def _repr_(self):
-#         return f"<Watchlist for user {self.user.username}, movie {self.movie.title}>"
+    
+
+    def _repr_(self):
+        return f"<Watchlist for user {self.user.username}, movie {self.movie.title}>"
