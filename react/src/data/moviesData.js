@@ -61,7 +61,42 @@ export const moviesData = [
         title:"Evil Dead Rise",
         full_poster_url:"https://image.tmdb.org/t/p/original/mIBCtPvKZQlxubxKMeViO2UrP3q.jpgcd",
     },
-
+    {
+        id:13,
+        title:"Aquaman and the Lost Kingdom",
+        full_poster_url:"https://image.tmdb.org/t/p/original/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
+    },
+    {
+        id:14,
+        title:"Bad Boys: Ride or Die",
+        full_poster_url:"https://image.tmdb.org/t/p/original/nP6RliHjxsz4irTKsxe8FRhKZYl.jpg",
+    },
+    {
+        id:15,
+        title:"Extraction 2",
+        full_poster_url:"https://image.tmdb.org/t/p/original/7gKI9hpEMcZUQpNgKrkDzJpbnNS.jpg",
+    },
+    {
+        id:16,
+        title:"Expend4bles",
+        full_poster_url:"https://image.tmdb.org/t/p/original/5jGKbYuZtdxSNOocI6ZziQeiY4n.jpg",
+    },
+    {
+        id:17,
+        title:"The Exorcism",
+        full_poster_url:"https://image.tmdb.org/t/p/original/v4PgVcOne2sumkyOK8O7BKB9PWX.jpg",
+    },
+    {
+        id:18,
+        title:"Fast X",
+        full_poster_url:"https://image.tmdb.org/t/p/original/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+    },
+    {
+        id:19,
+        title:"No Hard Feelings",
+        full_poster_url:"https://image.tmdb.org/t/p/original/gD72DhJ7NbfxvtxGiAzLaa0xaoj.jpg",
+    },
+    
 
     
 

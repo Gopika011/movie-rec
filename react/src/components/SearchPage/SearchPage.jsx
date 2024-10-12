@@ -16,7 +16,7 @@ const SearchPage = () => {
   // Function to get random movies
   const getRandomMovies = () => {
     const shuffled = [...moviesData].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 7); // Select 7 random movies
+    const selected = shuffled.slice(0, 19); // Select 16 random movies
     setRandomMovies(selected);
   };
 
@@ -36,9 +36,14 @@ const SearchPage = () => {
 
   return (
     <div className="flex bg-black min-h-screen"> {/* Ensure full height */}
-      <Sidebar />
-      <div className="flex-grow ml-40"> {/* Add left margin to avoid overlap with sidebar */}
-        <div className="flex flex-col items-center bg-black"> {/* Ensure the background remains black */}
+      {/* Fixed Sidebar */}
+      <div className="fixed top-0 left-0 z-10">
+        <Sidebar />
+      </div>
+      
+      {/* Movie list with its own scrollable area */}
+      <div className="ml-40 flex-grow overflow-auto h-screen"> {/* Add left margin to avoid overlap with sidebar */}
+        <div className="flex flex-col items-center bg-black h-full"> {/* Ensure the background remains black */}
           <Search onSearch={handleSearch} />  {/* Pass handleSearch to Search component */}
 
           {/* Display filtered movies or random movies if no search term */}
