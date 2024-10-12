@@ -235,6 +235,7 @@ def view_movies():
             "overview": movie.overview,
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
+            "runtime": movie.runtime,
             "rating": movie.rating,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
@@ -248,7 +249,14 @@ def view_movies():
 
 @app.route('/movies/genre/<genre_name>', methods=['GET'])
 def get_movies_by_genre(genre_name):
-    movies = Movies.query.join(MovieGenres).join(Genre).filter(Genre.name.ilike(genre_name)).all()
+    limit = request.args.get('limit', type=int) #the limit from query params if provided
+    movies = Movies.query.join(MovieGenres).join(Genre).filter(Genre.name.ilike(genre_name))
+
+    if limit:
+        movies = movies.limit(limit) 
+
+    movies = movies.all()  # Fetch all movies after applying any limit
+
     m_list=[]
 
     for movie in movies:
@@ -263,6 +271,7 @@ def get_movies_by_genre(genre_name):
             "overview": movie.overview,
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
+            "runtime": movie.runtime,
             "rating": movie.rating,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
@@ -282,7 +291,7 @@ def must_watch():
     movies = Movies.query.filter(Movies.rating >= 8) \
         .filter(~Movies.id.in_(documentary_movies)) \
         .order_by(Movies.rating.desc()) \
-        .limit(8) \
+        .limit(20) \
         .all()
     
     m_list=[]
@@ -299,6 +308,7 @@ def must_watch():
             "overview": movie.overview,
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
+            "runtime": movie.runtime,
             "rating": movie.rating,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
@@ -311,7 +321,7 @@ def must_watch():
 
 @app.route('/new_releases',methods=['GET'])
 def new_releases():
-    movies= Movies.query.order_by(Movies.release_date.desc()).limit(8).all()
+    movies= Movies.query.order_by(Movies.release_date.desc()).limit(20).all()
     m_list=[]
 
     for movie in movies:
@@ -326,6 +336,7 @@ def new_releases():
             "overview": movie.overview,
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
+            "runtime": movie.runtime,
             "rating": movie.rating,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
@@ -340,7 +351,7 @@ def new_releases():
 @app.route('/random_movies',methods=['GET'])
 def random_movies():  
     documentary_movies = db.session.query(MovieGenres.movie_id).join(Genre).filter(Genre.name == 'Documentary').subquery()
-    movies = Movies.query.filter(~Movies.id.in_(documentary_movies)).order_by(func.random()).limit(4).all()
+    movies = Movies.query.filter(~Movies.id.in_(documentary_movies)).order_by(func.random()).limit(20).all()
     
     m_list=[]
 
@@ -357,6 +368,7 @@ def random_movies():
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
             "rating": movie.rating,
+            "runtime": movie.runtime,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -369,7 +381,7 @@ def random_movies():
 
 @app.route('/movies/search', methods=['GET'])
 def search_movies():
-    query = request.args.get('query', '')
+    query = request.args.get('query')
     # movies = Movies.query.filter(Movies.title.ilike(f'%{query}%')).all()
     movies = Movies.query.join(MovieGenres).join(Genre).filter(Movies.title.ilike(f'%{query}%')).all()
     m_list=[]
@@ -386,6 +398,7 @@ def search_movies():
             "overview": movie.overview,
             "production_company": movie.production_company,
             "release_date": movie.release_date.isoformat(), 
+            "runtime": movie.runtime,
             "rating": movie.rating,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
@@ -499,6 +512,7 @@ def add_list(user_id, movie_id):
     db.session.commit()
     return jsonify({"message": "Movie added to watchlist"}), 200
 
+
 @app.route('/remove_list/<int:user_id>/<int:movie_id>', methods=['POST'])
 def remove_list(user_id, movie_id):
     ex = Watchlist.query.filter_by(user_id=user_id, movie_id=movie_id).first()
@@ -509,26 +523,43 @@ def remove_list(user_id, movie_id):
     db.session.commit()
     return jsonify({"message": "Movie removed from watchlist"}), 200
 
+
 @app.route('/view_list/<int:user_id>', methods=['GET'])
 def view_list(user_id):
     ex = Watchlist.query.filter_by(user_id=user_id).all()
 
     if not ex:
-        return jsonify({"message":"No Movie found in watchlist"}),404
+        return jsonify({"message":"Your watchlist is empty."}),404
     
     movies =[]
     for entry in ex:
         movie = Movies.query.get(entry.movie_id)
         if movie:
+            genre_ids = [genre.genre_id for genre in movie.movie_genres]
+            genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+            genre_names = [g.name for g in genres]
+
             movies.append({
-                'id': movie.id,
-                'title': movie.title,
-                'release_date': movie.release_date.isoformat(),
-                'rating': movie.rating
+                "id": movie.id,
+                "title": movie.title,
+                "original_language": movie.original_language,
+                "overview": movie.overview,
+                "production_company": movie.production_company,
+                "release_date": movie.release_date.isoformat(),
+                "runtime": movie.runtime,
+                "rating": movie.rating,
+                "credits": movie.credits,
+                "poster_path": movie.poster_path,
+                "backdrop_path": movie.backdrop_path,
+                "genres": genre_names
             })
 
     return jsonify(movies)
 
+@app.route('/check_list/<int:user_id>/<int:movie_id>', methods=['GET'])
+def check_list(user_id, movie_id):
+    ex = Watchlist.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+    return jsonify({"exists": bool(ex)})
 
 if __name__=='__main__':
     app.run(debug=True)

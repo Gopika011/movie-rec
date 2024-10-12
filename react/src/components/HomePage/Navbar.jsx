@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div className='w-full bg-[#141414] h-24 flex justify-between sticky top-0 z-50 text-white items-center px-20'>
-        <div className='text-4xl text-[#FA6C00] font-semibold'>#NAME</div>
+        <div className='text-4xl text-[#FA6C00] font-semibold'>POPFLICKS</div>
 
         <div className='flex gap-10 text-lg justify-center items-center'>
             <div className='text-[#FA6C00]'>about</div>

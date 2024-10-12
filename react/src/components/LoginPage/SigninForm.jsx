@@ -26,6 +26,7 @@ const SigninForm = ({setState}) => {
       navigate('/');
     }
   }
+  
   return (
     <div className="w-full max-w-md p-8 space-y-8 bg-black bg-opacity-70 shadow-lg rounded-lg">
       <h3>#NAME</h3>

@@ -5,7 +5,7 @@ import Sidebar from '../components/HomePage/Sidebar'
 
 const List = () => {
   return (
-    <div className=' min-h-screen'>
+    <div>
       
       <ListPage />
     </div>
