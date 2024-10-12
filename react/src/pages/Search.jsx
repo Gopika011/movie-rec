@@ -5,7 +5,7 @@ import Navbar from '../components/HomePage/Navbar'
 const Search = () => {
   return (
     <div className='flex flex-col min-h-screen'>
-        <Navbar/>
+        {/*<Navbar/>*/}
         <SearchPage />
     </div>
   )
