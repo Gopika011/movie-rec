@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String
 
 db = SQLAlchemy()  # Initialize the SQLAlchemy object
 
@@ -99,3 +100,12 @@ class Watchlist(db.Model):
 
     def _repr_(self):
         return f"<Watchlist for user {self.user.username}, movie {self.movie.title}>"
+    
+
+
+
+
+class ImportStatus(db.Model):
+    id = Column(Integer, primary_key=True)
+    import_type = Column(String, unique=True)  # e.g., 'movies_imported'
+    status = Column(Integer)  # 0 = not imported, 1 = imported

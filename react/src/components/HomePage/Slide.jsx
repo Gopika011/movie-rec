@@ -7,11 +7,11 @@ const Slide = () => {
     const [index, setIndex] = useState(0)
 
     const prevSlide = () =>{
-
+      setIndex(index-1)
     }
 
     const nextSlide = () =>{
-
+      setIndex(index+1)
     }
   return (
     <div className="flex items-center w-full p-3 bg-black border border-[#262626] rounded-xl">

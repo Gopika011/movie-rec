@@ -1,13 +1,14 @@
 import pandas as pd
 from flask import Flask, render_template, request,redirect, session, url_for, jsonify, abort
 from flask_cors import CORS
-from sqlalchemy import inspect
-from datetime import date,datetime
+from sqlalchemy import inspect,func
+from datetime import date,datetime,timedelta
 from flask_migrate import Migrate
-from models import Users,Movies,Genre,MovieGenres,Watchlist,db
+from models import Users,Movies,Genre,MovieGenres,Watchlist,ImportStatus,db
 
 
-app = Flask(__name__) #cretae instance of flask
+
+app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
@@ -15,50 +16,65 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY']='pacman'
 
 
-db.init_app(app) # Initialize the db with the app
+db.init_app(app) 
 migrate = Migrate(app,db)
 
-csv_file = "C:\Users\hp\Downloads\movies_req.csv"
+csv_file = "C:\\Users\\hp\\Downloads\\last.csv"
+
+
+
 df = pd.read_csv(csv_file, usecols=[
     'title', 'genres', 'original_language', 'overview', 'production_companies', 
     'release_date','runtime', 'tagline', 'vote_average', 'credits', 'poster_path', 'backdrop_path'
-])
+], encoding='latin1') 
 
 
-# Import into the database
 def import_movies():
+    # Check if movies have already been imported
+    import_status = ImportStatus.query.filter_by(import_type='movies_imported').first()
+    
+    if import_status and import_status.status == 1:
+        print("Movies have already been imported.")
+        return  # Exit if movies are already imported
+
     for index, row in df.iterrows():
-        # Check if the movie already exists in the database
-        existing_movie = Movies.query.filter_by(title=row['title'], release_date=row['release_date']).first()
+        print(f"Processing row {index}: {row.to_dict()}")
+        
+        existing_movie = Movies.query.filter(
+            Movies.title == row['title'].strip(),
+            Movies.release_date == datetime.strptime(row['release_date'], "%d-%m-%Y").date()
+
+        ).first()
+
         if not existing_movie:
-            # Create a new movie entry
-            release_date_str = row['release_date']  # e.g., "02-08-2023"
-            release_date = datetime.strptime(release_date_str, "%d-%m-%Y").date()
+            release_date = datetime.strptime(row['release_date'], "%d-%m-%Y").date()  # Adjust format
             new_movie = Movies(
-                title=row['title'],
+                title=row['title'].strip(),
                 release_date=release_date,
-
-
                 original_language=row['original_language'],
                 overview=row['overview'],
                 production_company=row['production_companies'],
-                # release_date=datetime.strptime(row['Release date'], '%Y-%m-%d'),
                 runtime=int(row['runtime']),
                 tagline=row['tagline'],
                 rating=float(row['vote_average']),
                 credits=row['credits'],
-                poster=row['poster_path'],
-                backdrop=row['backdrop_path']
+                poster_path=row['poster_path'],
+                backdrop_path=row['backdrop_path']
             )
             db.session.add(new_movie)
             db.session.flush()
 
-            # Handle genres
-            genre_list = row['genres'].split('-')  
+            genre_value = row['genres']
+            if isinstance(genre_value, str):
+                genre_list = genre_value.split('-')
+            else:
+                genre_list = []
+
             for genre_name in genre_list:
-                genre = Genre.query.filter(Genre.name.ilike(genre_name.strip())).first()
+                genre_name = genre_name.strip()
+                genre = Genre.query.filter(Genre.name.ilike(genre_name)).first()
                 if not genre:
-                    genre = Genre(name=genre_name.strip())
+                    genre = Genre(name=genre_name)
                     db.session.add(genre)
                     db.session.flush()
 
@@ -66,32 +82,25 @@ def import_movies():
                 db.session.add(movie_genre)
 
             db.session.commit()
+        else:
+            print(f"Movie already exists: {existing_movie.title} ({existing_movie.release_date})")
+
+    # Set the import status to indicate that movies have been imported
+    if not import_status:
+        import_status = ImportStatus(import_type='movies_imported', status=1)
+        db.session.add(import_status)
+    else:
+        import_status.status = 1
+    db.session.commit()
+
+
 
 def initial_data():
     db.create_all()
-    # if not Movies.query.all():
-    #     movie1 = Movies(title="Inception",release_date=date(2010,7,16), rating=8.8)
-    #     db.session.add(movie1)
-    #     db.session.commit()
 
-    # if not Users.query.all():
-    #     user1 = Users(username="jrgopika", password="123456")
-    #     db.session.add(user1)
-    #     db.session.commit()
-
-    # db.create_all()
-
-def initial_genre():
-    genre1 = Genre(name="Sci-fi")
-    db.session.add(genre1)
-    db.session.commit()
-    
-    movie = Movies.query.filter_by(title="Inception").first()
-
-    mg1 = MovieGenres(movie_id=movie.id, genre_id=genre1.id)
-    db.session.add(mg1)
-    db.session.commit()
-    print(f"Movie '{movie.title}' has been linked to genre '{genre1.name}'.")
+    if not db.session.query(ImportStatus).first():
+        db.session.add(ImportStatus(import_type='movies_imported', status=0))  # Set initial status to not imported
+        db.session.commit()
 
 
 with app.app_context():
@@ -102,19 +111,11 @@ with app.app_context():
     if not tables:
         initial_data()
 
-    # if not MovieGenres.query.all():
-    #     initial_genre()
-
-
     print(f"Tables created: {tables}")
 
-    # movies = Movies.query.all()
-    # print(f"Movies in the database: {[movie.title for movie in movies]}")
 
 @app.route('/')
 def index():
-    # m = Movies.query.all()
-    # return str(m)
     print(session)
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -125,10 +126,10 @@ def index():
     
 @app.route('/login', methods=['POST'])
 def login():
-    email= request.json['email']
+    email= request.json['email'].lower()
     password = request.json['password']
 
-    user = Users.query.filter_by(email=email).first()
+    user = Users.query.filter(Users.email.ilike(email)).first()
 
     if user and user.password == password:
         session['user_id'] = user.id
@@ -136,7 +137,8 @@ def login():
         return jsonify({
             "id": user.id,
             "email": user.email,
-            "name":user.name
+            "name": user.name,
+            "role": user.role
         })
     else:
         return jsonify({"error": "Unauthorized"}), 401
@@ -161,37 +163,36 @@ def get_current_user():
 @app.route('/signup', methods=['POST'])
 def signup():
     name= request.json['name']
-    email = request.json['email']
+    email = request.json['email'].lower()
     password = request.json['password']
     cpassword = request.json['cpassword']
+    role=request.json['role']
 
     if password!=cpassword:
         return "Passwords do not match"
 
-    ex_user = Users.query.filter_by(email = email).first()
+    ex_user = Users.query.filter(Users.email.ilike(email)).first()
     
     if ex_user:
         return jsonify({"error": "User already exists"}), 409
     
-    new_user = Users(name=name, email=email,password=password,role='user')
+    new_user = Users(name=name, email=email,password=password,role=role)
     db.session.add(new_user)
     db.session.commit()
     session['user_id'] = new_user.id 
     session['email'] = new_user.email
 
-
-    # return redirect(url_for('index'))
     return jsonify({
         "id": new_user.id,
         "email": new_user.email,
-        "name":new_user.name
+        "name":new_user.name,
+        "role":new_user.role
     })
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    # return redirect(url_for('login'))
     return jsonify({"message": "Logged out success"})
 
 @app.route('/view_session')
@@ -229,13 +230,171 @@ def view_movies():
         genre_names = [g.name for g in genres]
         m_list.append({
             "id": movie.id,
-            "title": movie.title,
-            "release_date": movie.release_date.isoformat(),
-            "genres":genre_names,
-            "rating": movie.rating
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
         })
 
     return jsonify(m_list)
+
+
+
+@app.route('/movies/genre/<genre_name>', methods=['GET'])
+def get_movies_by_genre(genre_name):
+    movies = Movies.query.join(MovieGenres).join(Genre).filter(Genre.name.ilike(genre_name)).all()
+    m_list=[]
+
+    for movie in movies:
+        genre_ids =  [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
+            })
+        
+    return jsonify(m_list)
+
+
+@app.route('/must_watch',methods=['GET'])
+def must_watch():
+    # movies= Movies.query.join(MovieGenres).join(Genre).filter(Movies.rating >= 8.0).filter(~Genre.name == 'Documentary').order_by(Movies.rating.desc()).limit(8).all()
+    
+    documentary_movies = db.session.query(MovieGenres.movie_id).join(Genre).filter(Genre.name == 'Documentary').subquery()
+    # Fetch movies with rating >= 8 excluding documentary movies
+    movies = Movies.query.filter(Movies.rating >= 8) \
+        .filter(~Movies.id.in_(documentary_movies)) \
+        .order_by(Movies.rating.desc()) \
+        .limit(8) \
+        .all()
+    
+    m_list=[]
+
+    for movie in movies:
+        genre_ids =  [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
+            })
+        
+    return jsonify(m_list)
+
+
+@app.route('/new_releases',methods=['GET'])
+def new_releases():
+    movies= Movies.query.order_by(Movies.release_date.desc()).limit(8).all()
+    m_list=[]
+
+    for movie in movies:
+        genre_ids =  [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
+            })
+        
+    return jsonify(m_list)
+
+
+
+@app.route('/random_movies',methods=['GET'])
+def random_movies():  
+    documentary_movies = db.session.query(MovieGenres.movie_id).join(Genre).filter(Genre.name == 'Documentary').subquery()
+    movies = Movies.query.filter(~Movies.id.in_(documentary_movies)).order_by(func.random()).limit(4).all()
+    
+    m_list=[]
+
+    for movie in movies:
+        genre_ids =  [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
+            })
+        
+    return jsonify(m_list)
+
+
+
+@app.route('/movies/search', methods=['GET'])
+def search_movies():
+    query = request.args.get('query', '')
+    # movies = Movies.query.filter(Movies.title.ilike(f'%{query}%')).all()
+    movies = Movies.query.join(MovieGenres).join(Genre).filter(Movies.title.ilike(f'%{query}%')).all()
+    m_list=[]
+
+    for movie in movies:
+        genre_ids =  [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        m_list.append({
+            "id": movie.id,
+            "title": movie.title, 
+            "original_language": movie.original_language, 
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(), 
+            "rating": movie.rating,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres" : genre_names
+            })
+        
+    return jsonify(m_list)
+
 
 
 @app.route('/add_movie',methods=['POST'])
@@ -245,7 +404,7 @@ def add_movie():
     release_date=date.fromisoformat(request.json['release_date']) #{"release_date": "2014-11-07"} to datetime.date(2014, 11, 7) python object
     rating= request.json['rating']
 
-    existing_movie = Movies.query.filter_by(title=title, release_date=release_date).first()
+    existing_movie = Movies.query.filter(Movies.title.ilike(title), Movies.release_date == release_date).first()
 
     if existing_movie:
         return jsonify({"message":"Movie already exists"}),409
@@ -255,7 +414,7 @@ def add_movie():
     db.session.commit()
 
     for g in genres:
-        genre=Genre.query.filter_by(name=g).first()
+        genre=Genre.query.filter(Genre.name.ilike(g)).first()
         if not genre:
             genre=Genre(name=g)
             db.session.add(genre)
@@ -274,7 +433,8 @@ def delete_movie(id):
     movie = Movies.query.filter_by(id=id).first()
     if not movie:
         return jsonify({"error":"Movie not found"}),404
-    
+
+    Watchlist.query.filter(Watchlist.movie_id == id).delete()
 
     MovieGenres.query.filter(MovieGenres.movie_id == id).delete()
     db.session.delete(movie)
@@ -380,3 +540,12 @@ if __name__=='__main__':
 #- do this everytime you update tables
 # flask db migrate
 # flask db upgrade
+
+
+
+#flask db init
+#flask db current
+#flask db migrate
+#flask db stamp head
+#flask db migrate
+#flask db upgrade

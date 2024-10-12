@@ -90,7 +90,7 @@ const HeroHome = () => {
             </svg>
             <label className="text-center text-xs">My List</label>
           </div>
-          <div className="size-36 h-min cursor-pointer hover:bg-gray-600 rounded transition-all duration-300"><img src={more} /></div>
+          <div className="size-36 h-min cursor-pointer hover:bg-gray-600 rounded transition-all duration-300" onClick={()=>{navigate('/moviepage')}}><img src={more} /></div>
         </div>
 
         <div className="absolute bottom-10 flex justify-between items-center w-full px-14">
