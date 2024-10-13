@@ -233,6 +233,7 @@ def view_movies():
         m_list.append({
             "id": movie.id,
             "title": movie.title, 
+            "tagline": movie.tagline,
             "original_language": movie.original_language, 
             "overview": movie.overview,
             "production_company": movie.production_company,

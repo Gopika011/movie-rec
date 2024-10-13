@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const useRemoveMovies = () => {
     const [loading,setLoading] = useState(false)
-    const [message, setMessage] = useState('')
 
     const removeMovies = async(movieid)=>{
         setLoading(true)
         try{
-            const res = await fetch(`http://127.0.0.1:5000/delete_movie${movieid}`)
+            const res = await fetch(`http://127.0.0.1:5000/delete_movie/${movieid}`)
             const data = await res.json()
 
             if (data.error) {

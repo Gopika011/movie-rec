@@ -26,6 +26,7 @@ const languages = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Japane
 
 const AddMovieModal = ({ isOpen, onClose, onSave }) => {
     const [currentStep, setCurrentStep] = useState(1);
+
     const [title, setTitle] = useState('');
     const [tagline, setTagline] = useState('');
     const [selectedGenres, setSelectedGenres] = useState([]);
@@ -43,15 +44,17 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
 
     if (!isOpen) return null;
 
-    const validateDate = (dateString) => {
-        const regex = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/; // Updated regex;
-        return regex.test(dateString);
-    };
+    // const validateDate = (dateString) => {
+    //     const regex = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/; // Updated regex;
+    //     return regex.test(dateString);
+    // };
+    const validateDate = true
 
-    const isValidUrl = (url) => {
-        const regex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return regex.test(url);
-    };
+    // const isValidUrl = (url) => {
+    //     const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    //     return regex.test(url);
+    // };
+    const isValidUrl = true
 
     const handleSave = () => {
         if (currentStep === 2 && (!backdropPath || !credits)) {
@@ -64,15 +67,15 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
             return;
         }
 
-        if (!validateDate(releaseDate)) {
-            alert("Please enter a valid date in the format yyyy/mm/dd");
-            return;
-        }
+        // if (!validateDate(releaseDate)) {
+        //     alert("Please enter a valid date in the format yyyy/mm/dd");
+        //     return;
+        // }
 
-        if (!isValidUrl(backdropPath)) {
-            alert("Please enter a valid URL for the backdrop path.");
-            return;
-        }
+        // if (!isValidUrl(backdropPath)) {
+        //     alert("Please enter a valid URL for the backdrop path.");
+        //     return;
+        // }
 
         const newMovie = {
             title,
@@ -80,18 +83,21 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
             genres: selectedGenres,
             release_date: releaseDate,
             runtime,
-            language,
-            description,
-            poster: posterUrl,
+            original_language:language,
+            overview: description,
+            poster_path: posterUrl,
             rating,
-            production_company: productionCompany,
+            prod_company: productionCompany,
             credits,
             backdrop_path: backdropPath,
         };
 
         onSave(newMovie);
         onClose();
+        setCurrentStep(1);
     };
+
+
 
     const handleNext = () => {
         if (!title || !tagline || !releaseDate || !runtime || !language) {
@@ -116,8 +122,8 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-orange-500 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 bg-opacity-70 p-6 rounded-lg shadow-lg w-[500px] max-w-full h-auto overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-900  p-6 rounded-lg shadow-lg w-[500px] max-w-full h-auto overflow-y-auto">
                 <h2 className="text-orange-500 mb-4 text-lg text-center font-semibold">
                     {currentStep === 1 ? 'Add Movie' : 'Add Movie'}
                 </h2>
@@ -204,13 +210,13 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleNext}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 text-center py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Next
                             </button>
                             <button
                                 onClick={onClose}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 text-center py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Cancel
                             </button>
@@ -271,26 +277,26 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                                 onChange={(e) => setBackdropPath(e.target.value)}
                                 className="w-full p-2 bg-black border border-gray-600 rounded text-white"
                             />
-                            {backdropPath && !isValidUrl(backdropPath) && (
+                            {/* {backdropPath && !isValidUrl(backdropPath) && (
                                 <div className="text-red-500 text-sm mt-1">Please enter a valid URL for the backdrop path.</div>
-                            )}
+                            )} */}
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                             <button
                                 onClick={handleBack}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 py-2 text-center rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 text-center py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
-                                Save
+                                Add
                             </button>
                             <button
                                 onClick={onClose}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 text-center py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Cancel
                             </button>
