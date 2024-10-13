@@ -69,15 +69,14 @@ function About() {
             <p className='text-lg'>
             POP FLICKS helps you find movies you will like. 
             Rate movies to build a custom taste profile, then
-            POPFLICKS recommends other movies for you to watch.
+            POP FLICKS recommends other movies for you to watch.
             </p>
           </div>
 
           <div className='h-1/2 gap-5'>
             <h4 className='text-3xl text-[#E86502] pb-5 font-semibold'>Rich Data</h4>
             <p className='text-lg'>
-            Learn more about movies with rich data, images, and
-            trailers.Browse movies by community-applied tags, or 
+            Learn more about movies with rich data and images.Browse movies by community-applied tags, or 
             apply your own tags. Explore the database 
             with expressive search tools.
             </p>
@@ -117,7 +116,7 @@ function About() {
     </button>
     {isOpenCineRandom && (
       <p className=' py-4 text-white  border-[#262626] border-t-2 px-6 text-xl'>
-        POP FLICKS has an extensive library of feature films, documentaries, TV shows, anime, award-winning Netflix originals, and more.
+        POP FLICKS has an extensive library of feature films, documentaries, TV shows, anime and more.
       </p>
     )}
   </div>
