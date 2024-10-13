@@ -35,7 +35,8 @@ const Sidebar = () => {
 
   const handleLogoutClick = () => {
     setActiveButton('logout');
-    alert('You have been logged out!');
+    navigate('/login');
+    localStorage.removeItem('user');
   };
 
   const buttonStyle = (buttonName) =>

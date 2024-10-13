@@ -28,7 +28,7 @@ const SigninForm = ({setState}) => {
       if(data.role=="user"){
         navigate('/');
       }else if (data.role === 'admin') {
-        navigate('/admin')
+        navigate('/adminpage/')
       }
     }
   }
