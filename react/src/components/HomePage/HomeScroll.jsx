@@ -65,7 +65,6 @@ const HomeScroll = () => {
       <div className=' w-full space-y-6'>
       <div className='flex justify-between items-center '>
           <h2 className='text-4xl font-bold'>Our Genres</h2>
-          <div><Slide/></div>
         </div>
         <div className='flex gap-8 py-5 '>
           {/* {[...Array(5)].map((_,i) =>{
