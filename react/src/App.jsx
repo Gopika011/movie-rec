@@ -6,6 +6,8 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import Search from './pages/Search';
 import List from './pages/List'
+import MoviePage from './pages/MoviePage';
+import AdminPage from './pages/AdminPage'; // Import AdminPage
 import Genre from './pages/Genre';
 
 function App() {
@@ -18,6 +20,7 @@ function App() {
         <Route path='/list' element={<ProtectedRoute><List/></ProtectedRoute>}/>
         <Route path='/genre/:genreName' element={<ProtectedRoute><Genre/></ProtectedRoute>}/>
         <Route path="/login" element={<Login />} />
+        <Route path="/adminpage/*" element={<AdminPage />} /> {/* Change to /adminpage/* */}
         <Route path="*" element={<NotFound/>}/>
       </Routes>
     </Router>

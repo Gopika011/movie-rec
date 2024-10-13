@@ -74,6 +74,17 @@
   background-color: #f57c00;
   color: white;
 }
+.admin-signin {
+  margin-top: 1rem; /* Add some margin for spacing */
+  font-size: 1.2rem; /* Adjust font size as needed */
+  color: #ff9800; /* Same color as other buttons */
+  text-decoration: underline; /* Underline the text */
+  cursor: pointer; /* Make it clickable */
+}
+
+.admin-signin:hover {
+  color: #f57c00; /* Optional: Change color on hover */
+}
 
 .about {
   position: absolute;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 import Form from './Form';
 
@@ -28,6 +29,7 @@ const Hero = ({scrollfunc}) => {
           <button className="bttn primary" onClick={handleSignup}>Sign Up</button>
           <button className="bttn secondary" onClick={handleSignin}>Sign In</button>
         </div>
+        <div className="admin-signin" onClick={handleAdminSignIn}>Sign In as Admin</div>
         <div className="about" onClick={scrollfunc}>about</div>
       </div>
       <div className="popcorn-image"></div>
