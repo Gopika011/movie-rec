@@ -3,6 +3,7 @@ import { FaUserCircle } from "react-icons/fa";
 
 const Header = () => {
     const [showUserInfo, setShowUserInfo] = useState(false); // State to control visibility
+    const user = JSON.parse(localStorage.getItem('user'))
 
     // Toggle the visibility of the user info box
     const toggleUserInfo = () => {
@@ -10,7 +11,7 @@ const Header = () => {
     };
 
     return (
-        <div className="bg-black rounded-xl text-orange-500 flex justify-between items-center px-6 py-4">
+        <div className="bg-[#141414]rounded-xl text-[#FA6C00] flex justify-between items-center px-6 py-4">
             {/* CornFlicks logo */}
             <h1 className="text-3xl font-bold">CornFlicks</h1>
 
@@ -23,9 +24,11 @@ const Header = () => {
 
                 {/* User info box */}
                 {showUserInfo && (
-                    <div className="absolute right-0 mt-2 w-48 bg-gray-800 text-white border border-gray-600 rounded shadow-lg p-2">
-                        <p className="text-center">Username: Admin</p> {/* Replace with actual username if needed */}
+                <div className='bg-[#1F1F1F] z-40 text-white border-2 border-[#262626]  absolute right-0 mt-2 w-56 rounded-lg shadow-lg transition-all duration-300 overflow-hidden'>
+                    <div className='h-12 flex justify-center items-center border-b-[2px] border-[#262626]  px-4 text-lg font-medium'>
+                        Name : {user.name}
                     </div>
+                </div>
                 )}
             </div>
         </div>
@@ -33,3 +36,6 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
