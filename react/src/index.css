@@ -2,3 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+    font-family: 'extenda'; /* Custom font name */
+    src: url('./fonts/extenda.otf') format('opentype'); /* Path to the OTF file */
+    font-weight:900;
+    font-style:normal ;
+}
+  

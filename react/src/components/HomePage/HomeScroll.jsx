@@ -10,11 +10,14 @@ import Carousal from './Carousal'
 import useGetGenres from '../../hooks/useGetGenres'
 import useGetMustWatch from '../../hooks/useGetMustWatch'
 import useGetNew from '../../hooks/useGetNew'
+import useGetRecommend from '../../hooks/useGetRecommend'
 
 
 const HomeScroll = () => {
   const [startIndex, setStartIndex] = useState(0);
+  const user = JSON.parse(localStorage.getItem('user'))
   const {getGenres} = useGetGenres();
+  const getRecommend = useGetRecommend();
   const getMustwatch = useGetMustWatch();
   const getNew = useGetNew();
   const navigate = useNavigate()
@@ -44,7 +47,7 @@ const HomeScroll = () => {
       const feelgood = await getGenres('Romance',20);
       setFmovies(feelgood)
 
-      const rec = await getGenres('Action',20);
+      const rec = await getRecommend(user.id);
       setRmovies(rec)
     }
 
