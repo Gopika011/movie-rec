@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import Header from "./Header"; // Importing Header
-import editIcon from '../../assets/Edit.png'; // Import your edit icon
-import removeIcon from '../../assets/Trash 2.png'; // Import your remove icon
-import AddMovieModal from "./AddMovieModal"; // Import AddMovieModal
-import CustomDialog from "./CustomDialog"; // Import CustomDialog
+import Header from "./Header";
+import editIcon from '../../assets/Edit.png';
+import removeIcon from '../../assets/Trash 2.png';
+import AddMovieModal from "./AddMovieModal";
+import CustomDialog from "./CustomDialog";
+import EditMovieModal from "./EditMovieModal";
 
 const initialMovies = [
-    { id: 615656, title: "Meg 2: The Trench", genres: "Action-Science Fiction-Horror", release_date: "2023-08-04" },
-    { id: 758323, title: "The Pope's Exorcist", genres: "Horror-Mystery-Thriller", release_date: "2023-04-05" },
+    { id: 615656, title: "Meg 2: The Trench", genres: ["Action", "Science Fiction", "Horror"], release_date: "2023-08-04" },
+    { id: 758323, title: "The Pope's Exorcist", genres: ["Horror", "Mystery", "Thriller"], release_date: "2023-04-05" },
     // (other movies)
 ];
 
@@ -17,42 +18,48 @@ const Manage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [movieToDelete, setMovieToDelete] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [movieToEdit, setMovieToEdit] = useState(null);
 
     const filteredMovies = movies.filter((movie) =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Handle adding a new movie
     const handleAddMovie = (newMovie) => {
-        // Generate a new unique ID
-        const id = Math.max(...movies.map((m) => m.id)) + 1; 
-        // Create a movie object with the necessary fields
+        const id = Math.max(...movies.map((m) => m.id)) + 1;
         const movieToAdd = {
-            id, // Add the generated ID
+            id,
             title: newMovie.title,
-            genres: newMovie.genres,
+            genres: newMovie.genres, // Ensure this is an array
             release_date: newMovie.release_date,
         };
-        // Add the new movie to the state
-        setMovies([...movies, movieToAdd]); 
+        setMovies([...movies, movieToAdd]);
     };
 
-    // Handle delete confirmation
+    const handleUpdateMovie = (updatedMovie) => {
+        setMovies(
+            movies.map((movie) => (movie.id === updatedMovie.id ? { ...updatedMovie, genres: updatedMovie.genres } : movie))
+        );
+    };
+
     const handleDeleteMovie = () => {
         setMovies(movies.filter((movie) => movie.id !== movieToDelete.id));
         setIsDeleteDialogOpen(false);
     };
 
-    // Open the delete confirmation dialog
     const openDeleteDialog = (movie) => {
         setMovieToDelete(movie);
         setIsDeleteDialogOpen(true);
     };
 
+    const openEditModal = (movie) => {
+        setMovieToEdit(movie);
+        setIsEditModalOpen(true);
+    };
+
     return (
         <div className="ml-60 rounded-xl bg-gray-800 text-white">
             <Header />
-
             <div className="bg-black p-6 rounded-md shadow-md h-[620px] mt-0">
                 <div className="flex justify-between mb-4 items-center">
                     <button
@@ -91,10 +98,13 @@ const Manage = () => {
                                     <tr key={movie.id} className="border-t border-gray-700" style={{ height: '50px' }}>
                                         <td className="px-4 py-2">{movie.id}</td>
                                         <td className="px-4 py-2">{movie.title}</td>
-                                        <td className="px-4 py-2">{movie.genres}</td>
+                                        <td className="px-4 py-2">{movie.genres.join(', ')}</td>
                                         <td className="px-4 py-2">{movie.release_date}</td>
                                         <td className="px-4 py-2">
-                                            <button className="text-white">
+                                            <button
+                                                className="text-white"
+                                                onClick={() => openEditModal(movie)}
+                                            >
                                                 <img src={editIcon} alt="Edit" className="w-5 h-5" />
                                             </button>
                                         </td>
@@ -122,8 +132,18 @@ const Manage = () => {
             <AddMovieModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                onSave={handleAddMovie} // Pass the handleAddMovie function
+                onSave={handleAddMovie}
             />
+
+            {/* Edit Movie Modal */}
+            {movieToEdit && (
+                <EditMovieModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onUpdateMovie={handleUpdateMovie}
+                    movie={movieToEdit}
+                />
+            )}
 
             {/* Custom Dialog for Delete Confirmation */}
             {movieToDelete && (
