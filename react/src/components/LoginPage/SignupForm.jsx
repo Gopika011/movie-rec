@@ -11,11 +11,11 @@ const SignupForm = ({setState}) => {
 
   const handleSubmit = async(event) =>{
     event.preventDefault();
-    
+    const role="user"
     const res = await fetch('http://127.0.0.1:5000/signup', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name, email, password, cpassword})
+      body: JSON.stringify({name, email, password, cpassword,role})
     })
 
     const data = await res.json();
@@ -31,7 +31,7 @@ const SignupForm = ({setState}) => {
 
   return (
     <div className="w-full max-w-md p-8 space-y-8 bg-black bg-opacity-70 shadow-lg rounded-lg">
-      <h3>#NAME</h3>
+      <h3 className='text-[#FD5F17] font-semibold'>POPFLICKS</h3>
       <h2 className="text-4xl font-bold">Sign Up</h2>
 
       <form className="space-y-6" onSubmit={handleSubmit}>

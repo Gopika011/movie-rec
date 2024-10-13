@@ -12,21 +12,22 @@ const HeroHome = () => {
 
   const slides = [
     {
+      id:237,
       title: 'Avengers : Endgame',
       desc: 'With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos’s actions and undo the chaos to the universe, no matter what consequence may be in store',
       url: '/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg',
     },
-    {
+    { id:239,
       title: 'Transformers: Age of Extinction',
       desc: 'As humanity picks up the pieces following the conclusion of "Transformers: Dark of the Moon" Autobots and Decepticons have all but vanished from the face of the planet. However a group of powerful ingenious businessman and scientists attempt to learn from past Transformer incursions and push the boundaries of technology beyond what they can control - all while an ancient powerful Transformer menace sets Earth in his cross-hairs.',
       url: '/wxr4Z6E83h14CogsZOzDm1vuDX3.jpg',
     },
-    {
+    { id: 259,
       title: 'Interstellar',
       desc: `The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.`,
       url: '/xJHokMbljvjADYdit5fK5VQsXEG.jpg',
     },
-    {
+    { id: 251,
       title: 'Fantastic Beasts: The Secrets of Dumbledore',
       desc: "Professor Albus Dumbledore knows the powerful dark wizard Gellert Grindelwald is moving to seize control of the wizarding world. Unable to stop him alone he entrusts magizoologist Newt Scamander to lead an intrepid team of wizards and witches. They soon encounter an array of old and new beasts as they clash with Grindelwald's growing legion of followers.",
       url: '/zGLHX92Gk96O1DJvLil7ObJTbaL.jpg',
@@ -81,7 +82,7 @@ const HeroHome = () => {
         </div>
 
         <div className="absolute bottom-[105px] flex gap-10 h-min w-full justify-center items-center pl-20">
-          <div className="flex flex-col justify-center items-center cursor-pointer text-white hover:text-gray-400 transition-all duration-300 h-min" onClick={() => { navigate('/list') }}>
+          <div className="flex flex-col justify-center items-center cursor-pointer text-white hover:text-gray-400 transition-all duration-300 h-min">
             <svg fill="none" viewBox="0 0 24 24" height="1em" width="1em" className="size-6">
               <path
                 fill="currentColor"
@@ -90,7 +91,7 @@ const HeroHome = () => {
             </svg>
             <label className="text-center text-xs">My List</label>
           </div>
-          <div className="size-36 h-min cursor-pointer hover:bg-gray-600 rounded transition-all duration-300" onClick={()=>{navigate('/moviepage')}}><img src={more} /></div>
+          <div className="size-36 h-min cursor-pointer hover:bg-gray-600 rounded transition-all duration-300"><img src={more} /></div>
         </div>
 
         <div className="absolute bottom-10 flex justify-between items-center w-full px-14">

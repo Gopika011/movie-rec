@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SigninForm from './SigninForm';
 import SignupForm from './SignupForm';
 
-const Form = () => {
-  const [state, setState] = useState(1);  //1-signin, 0-signup
+const Form = ({state, setState}) => {
+  // const [state, setState] = useState(1);  //1-signin, 0-signup
 
   return (
     <div className="absolute w-full h-full z-10 flex items-center justify-center backdrop-blur-md bg-white bg-opacity-0 text-white">

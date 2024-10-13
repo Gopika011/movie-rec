@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div className='w-full bg-[#141414] h-24 flex justify-between sticky top-0 z-50 text-white items-center px-20'>
-        <div className='text-4xl text-[#FA6C00] font-semibold'>#NAME</div>
+        <div className='text-4xl text-[#FA6C00] font-semibold'>POPFLICKS</div>
 
         <div className='flex gap-10 text-lg justify-center items-center'>
             <div className='text-[#FA6C00]'>about</div>
@@ -42,11 +42,25 @@ const Navbar = () => {
                 </svg>
             </div>
 
-            {open && 
+            {/* {open && 
             <div className='bg-black h-20 w-48 absolute top-[90px] right-20 transition-all duration-300 flex flex-col'>
                 <div className='h-1/2 flex justify-center items-center border-b-[1px]'>{user.name}</div>
                 <button className='h-1/2 flex justify-center items-center' onClick={handleLogout}>Logout</button>
-            </div>}
+            </div>} */}
+
+            {open && (
+              <div className='bg-[#1F1F1F] text-white border border-[#262626]  absolute top-[90px] right-20 w-56 rounded-lg shadow-lg transition-all duration-300 flex flex-col overflow-hidden'>
+                  <div className='h-12 flex justify-center items-center border-b-[2px] border-[#262626]  px-4 text-lg font-medium'>
+                    {user.name}
+                  </div>
+                  <button
+                  className='h-12 flex justify-center items-center hover:bg-[#151515] px-4 transition-colors duration-200'
+                  onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+              </div>
+                )}
         </div>
     </div>
   )
