@@ -23,10 +23,10 @@ csv_file = "C:\\Users\\hp\\Downloads\\last.csv"
 
 
 
-df = pd.read_csv(csv_file, usecols=[
-    'title', 'genres', 'original_language', 'overview', 'production_companies', 
-    'release_date','runtime', 'tagline', 'vote_average', 'credits', 'poster_path', 'backdrop_path'
-], encoding='latin1') 
+#df = pd.read_csv(csv_file, usecols=[
+    #'title', 'genres', 'original_language', 'overview', 'production_companies', 
+    #'release_date','runtime', 'tagline', 'vote_average', 'credits', 'poster_path', 'backdrop_path'
+#], encoding='latin1') 
 
 
 def import_movies():
