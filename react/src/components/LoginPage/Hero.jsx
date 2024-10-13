@@ -22,7 +22,7 @@ const Hero = ({scrollfunc}) => {
 
       <div className="hero-content">
         <div className="text-content">
-          <h1 className="title font-custom ">POP FLICKS</h1>
+          <h1 className="title font-teko ">POP FLICKS</h1>
           <p className="subtitle">Personalised Movie Recommendation</p>
         </div>
         <div className="button-group">
