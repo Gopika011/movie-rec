@@ -44,7 +44,7 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
     if (!isOpen) return null;
 
     const validateDate = (dateString) => {
-        const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+        const regex = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/; // Updated regex;
         return regex.test(dateString);
     };
 
@@ -65,7 +65,7 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
         }
 
         if (!validateDate(releaseDate)) {
-            alert("Please enter a valid date in the format dd/mm/yyyy");
+            alert("Please enter a valid date in the format yyyy/mm/dd");
             return;
         }
 
@@ -117,7 +117,7 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
 
     return (
         <div className="fixed inset-0 bg-orange-500 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 bg-opacity-70 p-6 rounded-lg shadow-lg w-[700px] max-w-full h-auto overflow-y-auto">
+            <div className="bg-gray-900 bg-opacity-70 p-6 rounded-lg shadow-lg w-[500px] max-w-full h-auto overflow-y-auto">
                 <h2 className="text-orange-500 mb-4 text-lg text-center font-semibold">
                     {currentStep === 1 ? 'Add Movie' : 'Add Movie'}
                 </h2>
@@ -175,7 +175,7 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                         <div className="mb-4">
                             <input
                                 type="text"
-                                placeholder="Release Date (dd/mm/yyyy)"
+                                placeholder="Release Date (yyyy/mm/dd)"
                                 value={releaseDate}
                                 onChange={(e) => setReleaseDate(e.target.value)}
                                 className="w-full p-2 bg-black border border-gray-600 rounded text-white"
@@ -204,13 +204,13 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleNext}
-                                className="bg-white text-black px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Next
                             </button>
                             <button
                                 onClick={onClose}
-                                className="bg-white text-black px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Cancel
                             </button>
@@ -234,7 +234,7 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                                 placeholder="Poster URL"
                                 value={posterUrl}
                                 onChange={(e) => setPosterUrl(e.target.value)}
-                                className="w-full bg-black border border-gray-600 rounded text-white"
+                                className="w-full p-2 bg-black border border-gray-600 rounded text-white"
                             />
                         </div>
                         <div className="mb-4">
@@ -278,19 +278,19 @@ const AddMovieModal = ({ isOpen, onClose, onSave }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleBack}
-                                className="bg-white text-black px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="bg-white text-black px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Save
                             </button>
                             <button
                                 onClick={onClose}
-                                className="bg-white text-black px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Cancel
                             </button>
