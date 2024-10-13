@@ -9,7 +9,7 @@ const AdminPage = () => {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-grow overflow-y-auto bg-orange-600 p-6 rounded-md shadow-lg">
+      <div className="flex-grow overflow-y-auto bg-[#FA6C00] p-6 rounded-md shadow-lg">
         <Routes>
           <Route path="/" element={<Navigate to="manage" />} /> 
           <Route path="add-admin" element={<AddAdmin />} /> 

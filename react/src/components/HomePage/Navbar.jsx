@@ -16,7 +16,6 @@ const Navbar = () => {
         <div className='text-4xl text-[#FA6C00] font-semibold'>POPFLICKS</div>
 
         <div className='flex gap-10 text-lg justify-center items-center'>
-            <div className='text-[#FA6C00]'>about</div>
             <div className='flex justify-center items-center gap-2 cursor-pointer hover:text-gray-400 transition-all duration-300' onClick={()=>{setOpen(!open)}}>
                 <svg
                 fill="none"

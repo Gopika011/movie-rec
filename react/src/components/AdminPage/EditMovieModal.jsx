@@ -48,9 +48,9 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
             setSelectedGenres(movie.genres);
             setReleaseDate(movie.release_date);
             setRuntime(movie.runtime);
-            setLanguage(movie.language);
-            setDescription(movie.description);
-            setPosterUrl(movie.poster);
+            setLanguage(movie.original_language);
+            setDescription(movie.overview);
+            setPosterUrl(movie.poster_path);
             setRating(movie.rating);
             setProductionCompany(movie.production_company);
             setCredits(movie.credits);
@@ -60,24 +60,24 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
 
     if (!isOpen) return null;
 
-    const validateDate = (dateString) => {
-        const regex = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/; // Updated regex;;
-        return regex.test(dateString);
-    };
-
-    const isValidUrl = (url) => {
-        const regex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return regex.test(url);
-    };
+    // const validateDate = (dateString) => {
+    //     const regex = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/; // Updated regex;;
+    //     return regex.test(dateString);
+    // };
+    
+    // const isValidUrl = (url) => {
+    //     const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    //     return regex.test(url);
+    // };
 
     const handleSave = () => {
         // Allow partial submissions
         if (currentStep === 2) {
             // For step 2, only validate backdrop path and credits if they are filled
-            if (backdropPath && !isValidUrl(backdropPath)) {
-                alert("Please enter a valid URL for the backdrop path.");
-                return;
-            }
+            // if (backdropPath && !isValidUrl(backdropPath)) {
+            //     alert("Please enter a valid URL for the backdrop path.");
+            //     return;
+            // }
 
             if (credits && !credits.trim()) {
                 alert("Credits cannot be empty if provided.");
@@ -87,22 +87,25 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
 
         // Create the updated movie object with all fields filled
         const updatedMovie = {
+            id: movie.id,
             title: title || undefined, // Allow undefined for empty fields
             tagline: tagline || undefined,
             genres: selectedGenres.length > 0 ? selectedGenres : undefined,
             release_date: releaseDate || undefined,
             runtime: runtime || undefined,
-            language: language || undefined,
-            description: description || undefined,
-            poster: posterUrl || undefined,
+            original_language: language || undefined,
+            overview: description || undefined,
+            poster_path: posterUrl || undefined,
             rating: rating || undefined,
-            production_company: productionCompany || undefined,
+            prod_company: productionCompany || undefined,
             credits: credits || undefined,
             backdrop_path: backdropPath || undefined,
         };
+        
 
         onUpdateMovie(updatedMovie);
         onClose();
+        setCurrentStep(1);
     };
 
     const handleNext = () => {
@@ -125,9 +128,9 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-orange-500 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 bg-opacity-70 p-6 rounded-lg shadow-lg w-[500px] max-w-full h-auto overflow-y-auto">
-                <h2 className="text-orange-500 mb-4 text-lg text-center font-semibold">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-900  p-6 rounded-lg shadow-lg w-[500px] max-w-full h-auto overflow-y-auto">
+                <h2 className="text-[#FA6C00] mb-4 text-lg text-center font-semibold">
                     Edit Movie
                 </h2>
 

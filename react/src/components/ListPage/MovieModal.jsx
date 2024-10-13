@@ -38,7 +38,7 @@ const MovieModal = ({ setSelectedMovie, selectedMovie }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-gray-900 text-white rounded-lg p-8 relative w-full max-w-4xl">
+      <div className="bg-gray-900 text-white rounded-lg p-8 relative w-full max-w-6xl h-[80vh] overflow-y-auto">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 bg-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 transition-colors duration-200"
@@ -54,14 +54,42 @@ const MovieModal = ({ setSelectedMovie, selectedMovie }) => {
           {/* Movie Details */}
           <div className="md:w-1/2 md:pl-8 mt-4 md:mt-0">
             <h1 className="text-4xl font-bold">{selectedMovie.title}</h1>
+            <p className="text-gray-500 mt-4 space-y-2">{selectedMovie.tagline}</p>
             <p className="text-gray-500 mt-4">{selectedMovie.overview}</p>
+            <div className="text-gray-500 mt-4">
+  {selectedMovie.genres.map((genre, index) => (
+    <button 
+      key={index} 
+      className="mr-2 bg-gray-700 text-white px-2 py-1 rounded" // Customize button styles
+    >
+      {genre}
+    </button>
+  ))}
+</div>
 
-            {/* Additional Information */}
-            <div className="mt-6 space-y-2">
+
+
+          {/* Additional Information */}
+          <div className="mt-6 flex justify-between gap-x-16">
+            {/* Left Section */}
+            <div className="space-y-2">
+              <p><strong>Language:</strong> {selectedMovie.original_language}</p>
               <p><strong>Rating:</strong> {selectedMovie.rating}</p>
               <p><strong>Release Date:</strong> {selectedMovie.release_date}</p>
               <p><strong>Runtime:</strong> {selectedMovie.runtime} mins</p>
             </div>
+
+            {/* Right Section */}
+            <div className="space-y-6">
+            <p>
+  <strong>Credits:</strong> {selectedMovie.credits.split('-').slice(0, 4).join(', ')}
+</p>
+
+              <p><strong>Production:</strong> {selectedMovie.production_companies}</p>
+            </div>
+          </div>
+
+            
 
             {/* Add to Watchlist Button */}
             {showLoading || checkLoading ? (
