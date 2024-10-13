@@ -28,7 +28,7 @@ const Home = () => {
       <HomeScroll/>
 
       <div className='border-t border-white flex justify-between py-6 px-20 pb-10 text-white text-md mt-32'>
-        <h4>COPYRIGHT 2024 . POPLICKS.COM</h4>
+        <h4>COPYRIGHT 2024 . POP FLICKS.COM</h4>
         <h4>CONTACT | PRIVACY POLICY</h4>
       </div>
     </div>
