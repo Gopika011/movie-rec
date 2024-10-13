@@ -1,8 +1,8 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import MovieModal from '../ListPage/MovieModal'
 
 const MovieList = ({ movies }) => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   if (movies.length === 0) {
     return null; // Return null if there are no movies to display
@@ -13,20 +13,20 @@ const MovieList = ({ movies }) => {
       {movies.map(movie => (
         <div 
           key={movie.id} 
-          className="m-2 w-36 flex-shrink-0 cursor-pointer transform transition-transform duration-300 hover:scale-105" // Add hover effect
-          onClick={() => navigate(`/movie/${movie.id}`)} // Navigate to the movie page
+          className="mx-2 my-2 w-36 flex-shrink-0 cursor-pointer transform transition-transform duration-300 hover:scale-105" // Add hover effect
+          onClick={() => {setSelectedMovie(movie)}}
         >
           <img 
-            src={movie.full_poster_url} 
+            src={`https://image.tmdb.org/t/p/original${movie.poster_path}`} 
             alt={movie.title} 
-            className="w-full rounded-lg" 
+            className="w-full rounded-md" 
             onError={(e) => e.target.src = 'placeholder-image-url.jpg'} // Placeholder on error
           />
-          <div className="text-white text-center mt-2">
-            {movie.title}
-          </div>
         </div>
       ))}
+
+
+      {selectedMovie && (<MovieModal setSelectedMovie={setSelectedMovie} selectedMovie={selectedMovie}/>)}
     </div>
   );
 };

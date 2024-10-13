@@ -10,10 +10,11 @@ const Home = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   const navigate = useNavigate();
 
-  const handleLogout = ()=>{
-    localStorage.removeItem('user');
-    navigate('/login');
-  }
+  // const handleLogout = ()=>{
+  //   localStorage.removeItem('user');
+  //   navigate('/login');
+  // }
+
   return (
     // <div className='w-screen h-screen flex flex-col space-y-10 p-10 items-center bg-gray-100'>
     //     <div className='text-3xl font-bold'>Welcome {user.name}</div>
@@ -27,13 +28,10 @@ const Home = () => {
       <HomeScroll/>
 
       <div className='border-t border-white flex justify-between py-6 px-20 pb-10 text-white text-md mt-32'>
-        <h4>COPYRIGHT 2024 . CORNFLICKS.COM</h4>
+        <h4>COPYRIGHT 2024 . POPLICKS.COM</h4>
         <h4>CONTACT | PRIVACY POLICY</h4>
       </div>
     </div>
-
-
-    
   )
 }
 
