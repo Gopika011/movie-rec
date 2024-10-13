@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const SigninForm = ({setState}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
   const navigate = useNavigate();
 
 
@@ -13,7 +14,7 @@ const SigninForm = ({setState}) => {
     const res = await fetch('http://127.0.0.1:5000/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email, password})
+      body: JSON.stringify({email, password,role})
     })
 
     const data = await res.json();
@@ -23,13 +24,18 @@ const SigninForm = ({setState}) => {
     } else {
       console.log(data);
       localStorage.setItem('user', JSON.stringify(data));
-      navigate('/');
+      
+      if(data.role=="user"){
+        navigate('/');
+      }else if (data.role === 'admin') {
+        navigate('/admin')
+      }
     }
   }
   
   return (
     <div className="w-full max-w-md p-8 space-y-8 bg-black bg-opacity-70 shadow-lg rounded-lg">
-      <h3>#NAME</h3>
+      <h3 className='text-[#FD5F17] font-semibold'>POPFLICKS</h3>
       <h2 className="text-4xl font-bold">Sign In</h2>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
@@ -50,8 +56,19 @@ const SigninForm = ({setState}) => {
             type="password"
             placeholder="Password"
             value={password}
-            className="w-full p-3 mt-2 mb-4 border border-gray-300 rounded-md focus:outline-none bg-transparent"
+            className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none bg-transparent"
             onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <input
+            id="role"
+            type="text"
+            placeholder="Role"
+            value={role}
+            className="w-full p-3 mt-2 mb-4 border border-gray-300 rounded-md focus:outline-none bg-transparent"
+            onChange={(e) => setRole(e.target.value)}
           />
         </div>
 

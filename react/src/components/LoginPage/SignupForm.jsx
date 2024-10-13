@@ -11,11 +11,11 @@ const SignupForm = ({setState}) => {
 
   const handleSubmit = async(event) =>{
     event.preventDefault();
-    
+    const role="user"
     const res = await fetch('http://127.0.0.1:5000/signup', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name, email, password, cpassword})
+      body: JSON.stringify({name, email, password, cpassword,role})
     })
 
     const data = await res.json();

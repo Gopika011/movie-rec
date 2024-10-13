@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home'
+import Admin from './pages/Admin'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -12,6 +13,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+        <Route path="/Admin" element={<ProtectedRoute><Admin/></ProtectedRoute>} />
         <Route path='/search' element={<ProtectedRoute><Search/></ProtectedRoute>}/>
         <Route path='/list' element={<ProtectedRoute><List/></ProtectedRoute>}/>
         <Route path='/genre/:genreName' element={<ProtectedRoute><Genre/></ProtectedRoute>}/>
