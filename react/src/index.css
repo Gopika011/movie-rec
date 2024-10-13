@@ -10,3 +10,11 @@
     font-style:normal ;
 }
   
+
+@font-face {
+    font-family: 'teko'; /* Custom font name */
+    src: url('./fonts/teko-sb.ttf') format('opentype'); /* Path to the OTF file */
+    font-weight:normal;
+    font-style:normal ;
+}
+  

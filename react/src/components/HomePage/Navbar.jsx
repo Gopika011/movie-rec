@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div className='w-full bg-[#141414] h-24 flex justify-between sticky top-0 z-50 text-white items-center px-20'>
-        <div className='text-7xl text-[#FA6C00] font-semibold font-custom '>POP FLICKS</div>
+        <div className='text-5xl text-[#FA6C00] font-semibold font-teko '>POP FLICKS</div>
 
         <div className='flex gap-10 text-lg justify-center items-center'>
             <div className='flex justify-center items-center gap-2 cursor-pointer hover:text-gray-400 transition-all duration-300' onClick={()=>{setOpen(!open)}}>

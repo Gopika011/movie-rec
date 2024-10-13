@@ -31,10 +31,10 @@
 
 .text-content .title {
   margin-top: -60px;
-  font-size: 12rem; 
+  font-size: 8rem; 
   font-weight: bold;
   color: #FD5F17;
-  margin-left: -5.5rem;
+  margin-left: 1rem;
 }
 
 .text-content .subtitle {
@@ -45,7 +45,7 @@
 
 .button-group {
   margin-top: 2rem;
-  margin-left: -8rem;
+  margin-left: -7rem;
 }
 
 .bttn {

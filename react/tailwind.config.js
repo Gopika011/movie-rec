@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         custom: ['extenda', 'sans-serif'],
+        teko: ['teko', 'sans-serif']
       },
     },
   },

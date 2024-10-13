@@ -13,7 +13,7 @@ const Header = () => {
     return (
         <div className="bg-[#141414]rounded-xl text-[#FA6C00] flex justify-between items-center px-6 py-4">
             {/* CornFlicks logo */}
-            <h1 className="text-3xl font-bold">CornFlicks</h1>
+            <h1 className="text-3xl font-bold font-teko">POP FLICKS</h1>
 
             {/* Admin profile */}
             <div className="relative">
