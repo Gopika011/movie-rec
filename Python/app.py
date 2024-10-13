@@ -276,6 +276,7 @@ def get_movies_by_genre(genre_name):
             "release_date": movie.release_date.isoformat(), 
             "runtime": movie.runtime,
             "rating": movie.rating,
+            "tagline":movie.tagline,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -313,6 +314,7 @@ def must_watch():
             "release_date": movie.release_date.isoformat(), 
             "runtime": movie.runtime,
             "rating": movie.rating,
+            "tagline":movie.tagline,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -341,6 +343,7 @@ def new_releases():
             "release_date": movie.release_date.isoformat(), 
             "runtime": movie.runtime,
             "rating": movie.rating,
+            "tagline":movie.tagline,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -354,7 +357,7 @@ def new_releases():
 @app.route('/random_movies',methods=['GET'])
 def random_movies():  
     documentary_movies = db.session.query(MovieGenres.movie_id).join(Genre).filter(Genre.name == 'Documentary').subquery()
-    movies = Movies.query.filter(~Movies.id.in_(documentary_movies)).order_by(func.random()).limit(20).all()
+    movies = Movies.query.filter(~Movies.id.in_(documentary_movies)).order_by(func.random()).limit(24).all()
     
     m_list=[]
 
@@ -372,6 +375,7 @@ def random_movies():
             "release_date": movie.release_date.isoformat(), 
             "rating": movie.rating,
             "runtime": movie.runtime,
+            "tagline":movie.tagline,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -403,6 +407,7 @@ def search_movies():
             "release_date": movie.release_date.isoformat(), 
             "runtime": movie.runtime,
             "rating": movie.rating,
+            "tagline":movie.tagline,
             "credits": movie.credits,
             "poster_path": movie.poster_path,
             "backdrop_path": movie.backdrop_path,
@@ -642,6 +647,88 @@ def view_list(user_id):
             })
 
     return jsonify(movies)
+
+@app.route('/recommend/<int:user_id>', methods=['GET'])
+def recommend_movies(user_id):
+    # Fetch all movies in the user's watchlist
+    watchlist_entries = Watchlist.query.filter_by(user_id=user_id).all()
+
+    if not watchlist_entries:
+        # Watchlist is empty, return 20 random movies
+        return get_random_movies(20)
+
+    # Collect all the genre IDs from the user's watchlist
+    genre_count = {}
+    for entry in watchlist_entries:
+        movie = Movies.query.get(entry.movie_id)
+        if movie:
+            for movie_genre in movie.movie_genres:
+                genre_id = movie_genre.genre_id
+                genre_count[genre_id] = genre_count.get(genre_id, 0) + 1
+
+    # Sort the genres by frequency (most to least common)
+    sorted_genre_ids = sorted(genre_count, key=genre_count.get, reverse=True)
+
+    # Fetch movies based on the most common genres, excluding movies already in the user's watchlist
+    watchlist_movie_ids = [entry.movie_id for entry in watchlist_entries]
+    recommended_movies = []
+
+    for genre_id in sorted_genre_ids:
+        genre_movies = Movies.query.join(MovieGenres).filter(MovieGenres.genre_id == genre_id) \
+                                   .filter(~Movies.id.in_(watchlist_movie_ids)) \
+                                   .limit(20 - len(recommended_movies)).all()
+        recommended_movies.extend(genre_movies)
+
+        # Stop if we already have 20 movies
+        if len(recommended_movies) >= 20:
+            break
+
+    # If we don't have enough movies, fill up the list with random movies
+    if len(recommended_movies) < 20:
+        remaining_count = 20 - len(recommended_movies)
+        random_movies = get_random_movies(remaining_count, exclude_ids=watchlist_movie_ids)
+        recommended_movies.extend(random_movies)
+
+    # Prepare the response data
+    movie_list = []
+    for movie in recommended_movies:
+        genre_ids = [g.genre_id for g in movie.movie_genres]
+        genres = Genre.query.filter(Genre.id.in_(genre_ids)).all()
+        genre_names = [g.name for g in genres]
+
+        movie_list.append({
+            "id": movie.id,
+            "title": movie.title,
+            "original_language": movie.original_language,
+            "overview": movie.overview,
+            "production_company": movie.production_company,
+            "release_date": movie.release_date.isoformat(),
+            "runtime": movie.runtime,
+            "rating": movie.rating,
+            "tagline":movie.tagline,
+            "credits": movie.credits,
+            "poster_path": movie.poster_path,
+            "backdrop_path": movie.backdrop_path,
+            "genres": genre_names
+        })
+
+    return jsonify(movie_list)
+
+
+def get_random_movies(limit, exclude_ids=None):
+    if exclude_ids is None:
+        exclude_ids = []
+
+    documentary_movies = db.session.query(MovieGenres.movie_id).join(Genre).filter(Genre.name == 'Documentary').subquery()
+    
+    # Fetch random movies excluding documentaries and already watched movies
+    random_movies = Movies.query.filter(~Movies.id.in_(documentary_movies)) \
+                                .filter(~Movies.id.in_(exclude_ids)) \
+                                .order_by(func.random()) \
+                                .limit(limit).all()
+
+    return random_movies
+
 
 @app.route('/check_list/<int:user_id>/<int:movie_id>', methods=['GET'])
 def check_list(user_id, movie_id):
