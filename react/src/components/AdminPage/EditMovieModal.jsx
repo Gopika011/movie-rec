@@ -216,13 +216,13 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleNext}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Next
                             </button>
                             <button
                                 onClick={onClose}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Cancel
                             </button>
@@ -288,13 +288,13 @@ const EditMovieModal = ({ isOpen, onClose, onUpdateMovie, movie }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleBack}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
+                                className="bg-gray-900 text-white w-24 py-2 rounded hover:bg-orange-500 hover:text-white transition duration-200"
                             >
                                 Save
                             </button>
